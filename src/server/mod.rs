@@ -5,6 +5,8 @@ use crate::proto::{
     remote_loader_server::RemoteLoader, Architecture, OperatingSystem, SystemInfoResponse,
 };
 
+mod exec;
+
 #[derive(Debug, Default)]
 pub struct RemoteServer {}
 
