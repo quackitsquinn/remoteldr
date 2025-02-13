@@ -8,6 +8,10 @@ package remoteldr;
 service RemoteLoader {
     // Gets the system information of the server.
     rpc SystemInfo (google.protobuf.Empty) returns (SystemInfoResponse) {}
+    // Sends data to the server.
+    rpc SendData (Data) returns (google.protobuf.Empty) {}
+    // Receives data from the server.
+    rpc GetData (DataRequest) returns (Data) {}
 }
 
 // A response containing the system information of the server. Used to determine what target to build for.
@@ -45,4 +49,18 @@ enum Architecture {
     ARM = 3;
     // ARM64 architecture.
     ARM64 = 4;
+}
+
+// Data to be sent to the server.
+message Data {
+    // The data to be sent.
+    bytes data = 1;
+    // The size of the data.
+    string filepath = 2;
+}
+
+// Requests data from the server.
+message DataRequest {
+    // The file path of the data to be requested.
+    string filepath = 1;
 }
