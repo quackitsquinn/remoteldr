@@ -4,27 +4,38 @@ import "google/protobuf/empty.proto";
 
 package remoteldr;
 
+// Remote process execution and control service.
 service RemoteLoader {
     // Gets the system information of the server.
     rpc SystemInfo (google.protobuf.Empty) returns (SystemInfoResponse) {}
 }
 
-
+// A response containing the system information of the server. Used to determine what target to build for.
 message SystemInfoResponse {
+    // The name of the server. Can be overridden by the server, but defaults to the hostname.
     string server_name = 1;
     OperatingSystem os = 2;
     Architecture arch = 3;
 }
 
+// The operating system of the server.
 enum OperatingSystem {
+    // Unknown operating system.
     UNKNOWN_OS = 0;
+    // Windows operating system.
     WINDOWS = 1;
+    // Linux operating system.
     LINUX = 2;
+    // macOS operating system.
     MACOS = 3;
 }
 
+// The architecture of the server.
 enum Architecture {
+    // Unknown architecture.
     UNKNOWN_ARCH = 0;
+    // 32-bit x86 architecture.
     X86 = 1;
+    // 64-bit x86 architecture.
     X86_64 = 2;
 }

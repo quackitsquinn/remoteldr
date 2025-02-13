@@ -1,3 +1,4 @@
+use gethostname::gethostname;
 use tonic::{Request, Response};
 
 use crate::proto::{
@@ -31,7 +32,7 @@ impl RemoteLoader for RemoteServer {
         };
 
         Ok(Response::new(SystemInfoResponse {
-            server_name: "Remote Loader".to_string(),
+            server_name: gethostname().to_string_lossy().to_string(),
             os: os_resp as i32,
             arch: arch_resp as i32,
         }))
