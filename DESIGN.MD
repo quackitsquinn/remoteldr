@@ -6,6 +6,10 @@ I do most of my development on my MacBook Pro, but I want to write a educational
 
 I have not done much research on prior art, but the little I have done seem to be mostly focused on remote development and sysadmin tasks. This tool is supposed to be incredibly easy to set up and "just work™️".
 
+### Why not use SSH?
+
+Using SSH would help, but I don't even want to try to set up an SSH server on a Windows machine. Though, this tool could in the future have support for SSH connections for unix-to-unix connections.
+
 ## Overview
 
 I'm thinking of protobufs and TCP sockets for the communication between the client and server.
