@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package remoteldr;
+
+service RemoteLoader {
+    // Gets the system information of the server.
+    rpc SystemInfo (google.protobuf.Empty) returns (SystemInfoResponse) {}
+}
+
+
+message SystemInfoResponse {
+    string server_name = 1;
+    OperatingSystem os = 2;
+    Architecture arch = 3;
+}
+
+enum OperatingSystem {
+    UNKNOWN_OS = 0;
+    WINDOWS = 1;
+    LINUX = 2;
+    MACOS = 3;
+}
+
+enum Architecture {
+    UNKNOWN_ARCH = 0;
+    X86 = 1;
+    X86_64 = 2;
+}
