@@ -4,7 +4,7 @@ use gethostname::gethostname;
 use tonic::{Code, Request, Response, Status};
 
 use crate::proto::{
-    remote_loader_server::RemoteLoader, Architecture, Data, DataRequest, OperatingSystem,
+    remote_loader_server::RemoteLoader, Architecture, Data, DataRequest, OperatingSystem, Process,
     SystemInfoResponse,
 };
 
@@ -14,6 +14,7 @@ mod res;
 #[derive(Debug, Default)]
 pub struct RemoteServer {
     resource_manager: Mutex<res::ResourceManager>,
+    process_manager: Mutex<exec::ExecutionController>,
 }
 
 #[tonic::async_trait]
@@ -77,6 +78,21 @@ impl RemoteLoader for RemoteServer {
             Err(e) => {
                 log::error!("Failed to read file: {}", e);
                 Err(Status::internal("Failed to read file"))
+            }
+        }
+    }
+
+    async fn spawn_process(
+        &self,
+        command: Request<Process>,
+    ) -> Result<tonic::Response<()>, tonic::Status> {
+        let command = command.into_inner();
+        let mut proc_manager = self.process_manager.lock().unwrap();
+        match proc_manager.spawn_process(&command) {
+            Ok(output) => Ok(Response::new(())),
+            Err(e) => {
+                log::error!("Failed to execute command: {}", e);
+                Err(Status::internal("Failed to execute command"))
             }
         }
     }

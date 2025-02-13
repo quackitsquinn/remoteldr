@@ -2,10 +2,13 @@ use std::{
     cell::Cell,
     env,
     fs::File,
-    path::Path,
+    iter,
+    path::{Path, PathBuf},
     process::Child,
     sync::{Arc, Mutex},
 };
+
+use crate::proto::Process;
 
 /// A controller for managing the execution of child processes.
 #[derive(Debug)]
@@ -79,7 +82,7 @@ impl ExecutionController {
         }
     }
     /// Spawns a new process. The process is added to the controller.
-    pub fn spawn_process(
+    pub fn spawn_process_raw(
         &mut self,
         binary: &Path,
         args: &[&str],
@@ -97,6 +100,19 @@ impl ExecutionController {
         let process = command.spawn()?;
         self.add_process(process);
         Ok(self.processes.last().unwrap())
+    }
+
+    pub fn spawn_process(&mut self, process: &Process) -> Result<&Child, ProcessError> {
+        let binary = PathBuf::from(process.process.clone());
+        let args = process.args.clone();
+        let args_ref = args.iter().map(|s| s.as_str()).collect::<Vec<_>>();
+        let env = process.env.clone();
+        let env_ref = env
+            .iter()
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect::<Vec<_>>();
+
+        self.spawn_process_raw(&binary, &args_ref, Some(&env_ref))
     }
     /// Waits for a process to exit. Returns the exit code of the process, and removes it from the controller.
     pub fn wait_for_process(&mut self, process: u32) -> Result<Option<i32>, ProcessError> {
@@ -137,7 +153,7 @@ mod tests {
     fn test_spawn_process() {
         let mut controller = ExecutionController::new();
         let process = controller
-            .spawn_process(Path::new("ls"), &["-l"], None)
+            .spawn_process_raw(Path::new("ls"), &["-l"], None)
             .unwrap();
         let process_id = process.id();
         let code = controller.wait_for_process(process_id).unwrap();
@@ -151,7 +167,7 @@ mod tests {
     fn test_kill_process() {
         let mut controller = ExecutionController::new();
         let process = controller
-            .spawn_process(Path::new("sleep"), &["1000"], None)
+            .spawn_process_raw(Path::new("sleep"), &["1000"], None)
             .unwrap();
         let process_id = process.id();
         controller.kill_process(process_id).unwrap();
@@ -162,10 +178,10 @@ mod tests {
     fn test_kill_all() {
         let mut controller = ExecutionController::new();
         controller
-            .spawn_process(Path::new("sleep"), &["1000"], None)
+            .spawn_process_raw(Path::new("sleep"), &["1000"], None)
             .unwrap();
         controller
-            .spawn_process(Path::new("sleep"), &["1000"], None)
+            .spawn_process_raw(Path::new("sleep"), &["1000"], None)
             .unwrap();
         controller.kill_all().unwrap();
         assert!(controller.processes.is_empty());

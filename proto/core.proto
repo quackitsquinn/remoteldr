@@ -12,6 +12,8 @@ service RemoteLoader {
     rpc SendData (Data) returns (google.protobuf.Empty) {}
     // Receives data from the server.
     rpc GetData (DataRequest) returns (Data) {}
+    // Executes a Process on the server.
+    rpc SpawnProcess (Process) returns (google.protobuf.Empty) {}
 }
 
 // A response containing the system information of the server. Used to determine what target to build for.
@@ -63,4 +65,14 @@ message Data {
 message DataRequest {
     // The file path of the data to be requested.
     string filepath = 1;
+}
+
+// Process to be executed on the server.
+message Process {
+    // The Process to be executed.
+    string process = 1;
+    // The arguments to the Process. Can be empty.
+    repeated string args = 2;
+    // The environment variables to be set for the Process. Can be empty.
+    map<string, string> env = 3;
 }
