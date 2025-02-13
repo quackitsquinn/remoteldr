@@ -27,7 +27,8 @@ impl RemoteLoader for RemoteServer {
         let arch_resp = match arch {
             "x86" => Architecture::X86,
             "x86_64" => Architecture::X8664,
-            // TODO: Arm and other architectures
+            "aarch64" => Architecture::Arm64,
+            "arm" => Architecture::Arm,
             _ => Architecture::UnknownArch,
         };
 

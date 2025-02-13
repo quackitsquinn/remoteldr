@@ -24,3 +24,7 @@ remoteldr client kill
 
 remoteldr client disconnect
 ``` 
+
+## DISCLAIMER:
+
+Whatever you do, do not run this anywhere accessible to the internet. This is not secure in any way, and is not meant to be. This is a development tool, and should be treated as such. It is not my responsibility if you get hacked because you ran this and someone ran xrat or something on your machine.

@@ -14,8 +14,11 @@ service RemoteLoader {
 message SystemInfoResponse {
     // The name of the server. Can be overridden by the server, but defaults to the hostname.
     string server_name = 1;
+    // The operating system of the server.
     OperatingSystem os = 2;
+    // The architecture of the server.
     Architecture arch = 3;
+    // TODO: Attempt to get the target triple of the server.
 }
 
 // The operating system of the server.
@@ -38,4 +41,8 @@ enum Architecture {
     X86 = 1;
     // 64-bit x86 architecture.
     X86_64 = 2;
+    // ARM architecture.
+    ARM = 3;
+    // ARM64 architecture.
+    ARM64 = 4;
 }
