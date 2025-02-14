@@ -30,7 +30,11 @@ impl ResourceManager {
     }
     /// Sets the working directory.
     pub fn set_working_dir(&mut self, path: PathBuf) {
-        self.working_dir = path;
+        if !path.exists() {
+            fs::create_dir_all(&path).expect("Failed to create working directory");
+        }
+        let working_dir = path.canonicalize().expect("Failed to canonicalize path");
+        self.working_dir = working_dir;
     }
 
     /// Creates a new directory at the specified path.

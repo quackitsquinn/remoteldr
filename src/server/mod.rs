@@ -1,11 +1,17 @@
-use std::sync::Mutex;
+use std::{
+    net::{Ipv4Addr, SocketAddr},
+    sync::Mutex,
+};
 
 use gethostname::gethostname;
-use tonic::{Code, Request, Response, Status};
+use tonic::{transport::Server, Code, Request, Response, Status};
 
-use crate::proto::{
-    remote_loader_server::RemoteLoader, Architecture, Data, DataRequest, OperatingSystem, Process,
-    SystemInfoResponse,
+use crate::{
+    args::ServerArgs,
+    proto::{
+        remote_loader_server::{RemoteLoader, RemoteLoaderServer},
+        Architecture, Data, DataRequest, OperatingSystem, Process, SystemInfoResponse,
+    },
 };
 
 mod exec;
@@ -96,4 +102,21 @@ impl RemoteLoader for RemoteServer {
             }
         }
     }
+}
+
+pub async fn run_server(args: ServerArgs) -> Result<(), Box<dyn std::error::Error>> {
+    let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, args.port));
+    let server = RemoteServer::default();
+    server
+        .resource_manager
+        .lock()
+        .unwrap()
+        .set_working_dir(args.workdir.clone());
+
+    Server::builder()
+        .add_service(RemoteLoaderServer::new(server))
+        .serve(addr)
+        .await?;
+
+    Ok(())
 }
