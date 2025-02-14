@@ -4,6 +4,7 @@ use std::{
 };
 
 use gethostname::gethostname;
+use log::info;
 use tonic::{transport::Server, Code, Request, Response, Status};
 
 use crate::{
@@ -16,6 +17,8 @@ use crate::{
 
 mod exec;
 mod res;
+
+const TARGET: &str = include_str!(concat!(env!("OUT_DIR"), "/target"));
 
 #[derive(Debug, Default)]
 pub struct RemoteServer {
@@ -51,6 +54,7 @@ impl RemoteLoader for RemoteServer {
             server_name: gethostname().to_string_lossy().to_string(),
             os: os_resp as i32,
             arch: arch_resp as i32,
+            target_triple: TARGET.to_string(),
         }))
     }
 
@@ -106,12 +110,14 @@ impl RemoteLoader for RemoteServer {
 
 pub async fn run_server(args: ServerArgs) -> Result<(), Box<dyn std::error::Error>> {
     let addr = SocketAddr::from((Ipv4Addr::LOCALHOST, args.port));
+    info!("Starting server on {}", addr);
     let server = RemoteServer::default();
     server
         .resource_manager
         .lock()
         .unwrap()
         .set_working_dir(args.workdir.clone());
+    info!("Working directory set to {}", args.workdir.display());
 
     Server::builder()
         .add_service(RemoteLoaderServer::new(server))

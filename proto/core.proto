@@ -24,7 +24,8 @@ message SystemInfoResponse {
     OperatingSystem os = 2;
     // The architecture of the server.
     Architecture arch = 3;
-    // TODO: Attempt to get the target triple of the server.
+    // The target triple of the server. Used for cross-compilation.
+    string target_triple = 4;
 }
 
 // The operating system of the server.

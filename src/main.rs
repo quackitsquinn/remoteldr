@@ -3,6 +3,7 @@ use remote_ldr::{Arguments, Command};
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
     let args = Arguments::parse();
 
     match args.command {
