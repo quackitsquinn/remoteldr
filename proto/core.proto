@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 package remoteldr;
 
@@ -12,8 +13,8 @@ service RemoteLoader {
     rpc SendData (Data) returns (google.protobuf.Empty) {}
     // Receives data from the server.
     rpc GetData (DataRequest) returns (Data) {}
-    // Executes a Process on the server.
-    rpc SpawnProcess (Process) returns (google.protobuf.Empty) {}
+    // Executes a Process on the server. Returns the process ID.
+    rpc SpawnProcess (Process) returns (google.protobuf.UInt32Value) {}
 }
 
 // A response containing the system information of the server. Used to determine what target to build for.

@@ -1,11 +1,6 @@
 use std::{
-    cell::Cell,
-    env,
-    fs::File,
-    iter,
     path::{Path, PathBuf},
     process::Child,
-    sync::{Arc, Mutex},
 };
 
 use crate::proto::Process;
@@ -147,7 +142,6 @@ pub enum ProcessError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{os::unix::process, process::Command};
 
     #[test]
     fn test_spawn_process() {

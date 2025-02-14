@@ -5,7 +5,7 @@ use std::{
 
 use gethostname::gethostname;
 use log::info;
-use tonic::{transport::Server, Code, Request, Response, Status};
+use tonic::{transport::Server, Request, Response, Status};
 
 use crate::{
     args::ServerArgs,
@@ -95,11 +95,11 @@ impl RemoteLoader for RemoteServer {
     async fn spawn_process(
         &self,
         command: Request<Process>,
-    ) -> Result<tonic::Response<()>, tonic::Status> {
+    ) -> Result<tonic::Response<u32>, tonic::Status> {
         let command = command.into_inner();
         let mut proc_manager = self.process_manager.lock().unwrap();
         match proc_manager.spawn_process(&command) {
-            Ok(output) => Ok(Response::new(())),
+            Ok(output) => Ok(Response::new(output.id())),
             Err(e) => {
                 log::error!("Failed to execute command: {}", e);
                 Err(Status::internal("Failed to execute command"))
